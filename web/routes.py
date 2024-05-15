@@ -1,9 +1,9 @@
-from flask import request, render_template, jsonify
+from flask import Flask, request, render_template, jsonify
 import requests
-from gstreamer.pipeline import create_pipeline, init_gstreamer
 import logging
+from gstreamer.stream_handler import init_gstreamer, start_stream, stop_stream
 
-pipeline = None
+app = Flask(__name__)
 
 def configure_routes(app):
 
@@ -12,31 +12,19 @@ def configure_routes(app):
         return render_template('index.html')
 
     @app.route('/start_stream', methods=['POST'])
-    def start_stream():
-        global pipeline
+    def start_stream_route():
         local_delay_ms = int(request.form.get('local_delay_ms', 5000))
-        target_ip = request.form.get('target_ip')
-        video_port = int(request.form.get('video_port', 5000))
-
-        if pipeline:
-            pipeline.set_state(Gst.State.NULL)
-
-        pipeline = create_pipeline(local_delay_ms, target_ip, video_port)
-        if not pipeline:
-            logging.error("Fehler beim Erstellen der Pipeline")
-            return jsonify({"error": "Fehler beim Erstellen der Pipeline"}), 500
-
-        pipeline.set_state(Gst.State.PLAYING)
-        logging.info("Stream gestartet")
-        return "Stream gestartet"
+        target_ip = request.form.get('target_ip', '192.168.200.110')  # Standardwert als Beispiel
+        video_port = int(request.form.get('video_port', 5000))  # Standardwert als Beispiel
+        success, message = start_stream(local_delay_ms, target_ip, video_port)
+        if not success:
+            return jsonify({"error": message}), 500
+        return message
 
     @app.route('/stop_stream', methods=['POST'])
-    def stop_stream():
-        global pipeline
-        if pipeline:
-            pipeline.set_state(Gst.State.NULL)
-            pipeline = None
-        return "Stream gestoppt"
+    def stop_stream_route():
+        message = stop_stream()
+        return message
 
     @app.route('/configure_slave', methods=['POST'])
     def configure_slave():
@@ -50,4 +38,5 @@ def configure_routes(app):
         response = requests.post(f'http://{slave_ip}:8080/{action}', data=data)
         return response.text
 
+    # Diese Zeile initialisiert GStreamer beim Starten der Flask-Anwendung
     init_gstreamer()
