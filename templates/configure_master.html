@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Configure Master</title>
+</head>
+<body>
+    <h1>Configure Master</h1>
+    <form action="/start_stream" method="post">
+        <label for="local_delay_ms">Lokale Verzögerung (ms):</label>
+        <input type="number" id="local_delay_ms" name="local_delay_ms" value="5000">
+        <label for="target_ip">Ziel-IP:</label>
+        <input type="text" id="target_ip" name="target_ip" value="192.168.200.110">
+        <label for="video_port">Video-Port:</label>
+        <input type="number" id="video_port" name="video_port" value="5000">
+        <button type="submit">Stream starten</button>
+    </form>
+    <form action="/stop_stream" method="post">
+        <button type="submit">Stream stoppen</button>
+    </form>
+    <h2>Slave-Konfiguration</h2>
+    <form action="/configure_slave" method="post">
+        <label for="slave_ip">IP des Slave:</label>
+        <input type="text" id="slave_ip" name="slave_ip" required>
+        <label for="local_delay_ms">Lokale Verzögerung (ms):</label>
+        <input type="number" id="local_delay_ms" name="local_delay_ms" value="5000">
+        <label for="target_ip">Ziel-IP:</label>
+        <input type="text" id="target_ip" name="target_ip" value="192.168.200.110">
+        <label for="video_port">Video-Port:</label>
+        <input type="number" id="video_port" name="video_port" value="5000">
+        <input type="hidden" name="action" value="start_stream">
+        <button type="submit">Slave Stream starten</button>
+    </form>
+    <form action="/configure_slave" method="post">
+        <input type="hidden" name="slave_ip" value="IP_des_Slave" required>
+        <input type="hidden" name="action" value="stop_stream">
+        <button type="submit">Slave Stream stoppen</button>
+    </form>
+</body>
+</html>

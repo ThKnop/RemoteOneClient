@@ -1,0 +1,5 @@
+Flask
+requests
+PyGObject
+scikit-build
+Cython

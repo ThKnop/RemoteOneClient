@@ -86,3 +86,6 @@ config.py
 *.bak
 *.swp
 *.swo
+
+# mp4
++.mp4

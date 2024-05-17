@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>REMOTE</title>
+    <script>
+        async function fetchStats() {
+            try {
+                const response = await fetch('/stream_stats');
+                const data = await response.json();
+                document.getElementById('bitrate').textContent = data.bitrate || 'N/A';
+                document.getElementById('jitter').textContent = data.jitter || 'N/A';
+                document.getElementById('latency').textContent = data.latency || 'N/A';
+            } catch (error) {
+                console.error('Error fetching stats:', error);
+            }
+        }
+
+        // Poll the stats every 5 seconds
+        setInterval(fetchStats, 5000);
+
+        // Fetch stats on page load
+        window.onload = fetchStats;
+    </script>
+</head>
+<body>
+    <h1>Stream ist gestartet</h1>
+
+    <form action="/stop_stream" method="post">
+        <button type="submit">Stream stoppen</button>
+    </form>
+
+    <h2>Stream Status</h2>
+    <p>Bitrate: <span id="bitrate">N/A</span></p>
+    <p>Jitter: <span id="jitter">N/A</span></p>
+    <p>Latenz: <span id="latency">N/A</span></p>
+</body>
+</html>
